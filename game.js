@@ -1,12 +1,13 @@
 'use strict';
 
 import { GAME_CONFIG } from './js/config/game-config.js';
-import { SYMBOL_ICONS, REEL_STRIPS } from './js/config/symbols.js';
-import { PAYTABLE  } from './js/config/paytable.js';
+import { REEL_STRIPS } from './js/config/symbols.js';
+import { PAYTABLE } from './js/config/paytable.js';
 import { PAYLINES } from './js/config/paylines.js';
 
 import { gameState } from './js/core/game-state.js';
-
+import { setSymbol } from './js/reels/reel.js';
+import { createReels, getVisibleView } from './js/reels/reel-manager.js';
 
 const REEL_COUNT = 5;
 const ROW_COUNT = 3;
@@ -23,8 +24,6 @@ const SYMBOL_WIDTH = GAME_WIDTH / REEL_COUNT;
 const SYMBOL_HEIGHT = GAME_HEIGHT / ROW_COUNT;
 
 const SYMBOL_GAP = 8;
-
-
 
 /* =========================================================
    DOM REFERENCES
@@ -68,7 +67,7 @@ const reelLayer = new PIXI.Container();
 
 const paylineLayer = new PIXI.Container();
 
-const reelViews = [];
+let reelViews = [];
 
 /* =========================================================
    GENERAL HELPERS
@@ -153,7 +152,16 @@ async function init() {
 
 	createBackground();
 
-	createReels();
+	reelViews = createReels({
+		reelLayer,
+		reelCount: REEL_COUNT,
+		totalRenderedRows: TOTAL_RENDERED_ROWS,
+		bufferRows: BUFFER_ROWS,
+		symbolWidth: SYMBOL_WIDTH,
+		symbolHeight: SYMBOL_HEIGHT,
+		gameHeight: GAME_HEIGHT,
+		randomSymbolForReel,
+	});
 
 	updateUI();
 
@@ -204,132 +212,6 @@ function createBackground() {
 	background.fill(0x080b12);
 
 	reelLayer.addChild(background);
-}
-
-/* =========================================================
-   SYMBOL VIEW
-========================================================= */
-
-function createSymbolView(reelIndex, slotIndex) {
-	const container = new PIXI.Container();
-
-	container.reelIndex = reelIndex;
-
-	container.slotIndex = slotIndex;
-
-	container.symbolName = null;
-
-	const background = new PIXI.Graphics();
-
-	background.roundRect(
-		SYMBOL_GAP / 2,
-
-		SYMBOL_GAP / 2,
-
-		SYMBOL_WIDTH - SYMBOL_GAP,
-
-		SYMBOL_HEIGHT - SYMBOL_GAP,
-
-		18,
-	);
-
-	background.fill(0xf3f4f6);
-
-	background.stroke({
-		width: 4,
-
-		color: 0x3f3f46,
-	});
-
-	container.addChild(background);
-
-	const text = new PIXI.Text({
-		text: '',
-
-		style: {
-			fontFamily: 'Arial, sans-serif',
-
-			fontSize: 86,
-
-			align: 'center',
-		},
-	});
-
-	text.anchor.set(0.5);
-
-	text.x = SYMBOL_WIDTH / 2;
-
-	text.y = SYMBOL_HEIGHT / 2;
-
-	container.addChild(text);
-
-	container.symbolText = text;
-
-	return container;
-}
-
-/* =========================================================
-   SET SYMBOL
-========================================================= */
-
-function setSymbol(view, symbolName) {
-	view.symbolName = symbolName;
-
-	view.symbolText.text = SYMBOL_ICONS[symbolName];
-}
-
-/* =========================================================
-   CREATE REELS
-========================================================= */
-
-function createReels() {
-	for (let reelIndex = 0; reelIndex < REEL_COUNT; reelIndex++) {
-		const reelContainer = new PIXI.Container();
-
-		reelContainer.x = reelIndex * SYMBOL_WIDTH;
-
-		const mask = new PIXI.Graphics();
-
-		mask.rect(0, 0, SYMBOL_WIDTH, GAME_HEIGHT);
-
-		mask.fill(0xffffff);
-
-		reelContainer.addChild(mask);
-
-		const symbolsContainer = new PIXI.Container();
-
-		symbolsContainer.mask = mask;
-
-		reelContainer.addChild(symbolsContainer);
-
-		const views = [];
-
-		for (let slotIndex = 0; slotIndex < TOTAL_RENDERED_ROWS; slotIndex++) {
-			const view = createSymbolView(reelIndex, slotIndex);
-
-			view.y = (slotIndex - BUFFER_ROWS) * SYMBOL_HEIGHT;
-
-			setSymbol(
-				view,
-
-				randomSymbolForReel(reelIndex),
-			);
-
-			symbolsContainer.addChild(view);
-
-			views.push(view);
-		}
-
-		reelViews.push({
-			container: reelContainer,
-
-			symbolsContainer,
-
-			views,
-		});
-
-		reelLayer.addChild(reelContainer);
-	}
 }
 
 /* =========================================================
@@ -520,14 +402,6 @@ async function animateReels(result) {
 	}
 
 	await Promise.all(animations);
-}
-
-/* =========================================================
-   GET VISIBLE SYMBOL VIEW
-========================================================= */
-
-function getVisibleView(reelIndex, row) {
-	return reelViews[reelIndex].views[BUFFER_ROWS + row];
 }
 
 /* =========================================================
@@ -768,7 +642,7 @@ function processFreeSpins(result, isFreeSpin) {
 function resetSymbolVisuals() {
 	for (let reel = 0; reel < REEL_COUNT; reel++) {
 		for (let row = 0; row < ROW_COUNT; row++) {
-			const view = getVisibleView(reel, row);
+			const view = getVisibleView(reelViews, reel, row, BUFFER_ROWS);
 
 			view.alpha = 1;
 
@@ -852,7 +726,7 @@ function highlightWin(win) {
 	 */
 	for (let reel = 0; reel < REEL_COUNT; reel++) {
 		for (let row = 0; row < ROW_COUNT; row++) {
-			getVisibleView(reel, row).alpha = 0.28;
+			getVisibleView(reelViews, reel, row, BUFFER_ROWS).alpha = 0.28;
 		}
 	}
 
@@ -863,7 +737,7 @@ function highlightWin(win) {
 	for (let reel = 0; reel < win.count; reel++) {
 		const row = win.line[reel];
 
-		const view = getVisibleView(reel, row);
+		const view = getVisibleView(reelViews, reel, row, BUFFER_ROWS);
 
 		view.alpha = 1;
 
@@ -896,7 +770,7 @@ function highlightAllWins(wins) {
 
 	for (let reel = 0; reel < REEL_COUNT; reel++) {
 		for (let row = 0; row < ROW_COUNT; row++) {
-			const view = getVisibleView(reel, row);
+			let view = getVisibleView(reelViews, reel, row, BUFFER_ROWS);
 
 			const key = `${reel}:${row}`;
 
@@ -926,15 +800,16 @@ function highlightScatters(positions) {
 
 	for (let reel = 0; reel < REEL_COUNT; reel++) {
 		for (let row = 0; row < ROW_COUNT; row++) {
-			getVisibleView(reel, row).alpha = 0.3;
+			getVisibleView(reelViews, reel, row, BUFFER_ROWS).alpha = 0.3;
 		}
 	}
 
 	for (const position of positions) {
 		const view = getVisibleView(
+			reelViews,
 			position.reel,
-
 			position.row,
+			BUFFER_ROWS,
 		);
 
 		view.alpha = 1;
@@ -1114,7 +989,9 @@ async function spin() {
 		resetSymbolVisuals();
 
 		messageElement.textContent =
-			gameState.freeSpins > 0 ? `FREE SPINS LEFT ${gameState.freeSpins}` : 'PRESS SPIN';
+			gameState.freeSpins > 0
+				? `FREE SPINS LEFT ${gameState.freeSpins}`
+				: 'PRESS SPIN';
 	}
 
 	gameState.spinning = false;
