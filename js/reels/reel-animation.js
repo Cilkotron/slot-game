@@ -1,182 +1,182 @@
-import { setSymbol } from './reel.js';
+import { setSymbol } from "./reel.js";
 
 export function recycleReelSymbols({
-	reelViews,
-	reelIndex,
-	gameHeight,
-	symbolHeight,
-	totalRenderedRows,
-	randomSymbolForReel,
+    reelViews,
+    reelIndex,
+    gameHeight,
+    symbolHeight,
+    totalRenderedRows,
+    randomSymbolForReel,
 }) {
-	const reel = reelViews[reelIndex];
+    const reel = reelViews[reelIndex];
 
-	for (const view of reel.views) {
-		while (view.y >= gameHeight + symbolHeight) {
-			view.y -= totalRenderedRows * symbolHeight;
+    for (const view of reel.views) {
+        while (view.y >= gameHeight + symbolHeight) {
+            view.y -= totalRenderedRows * symbolHeight;
 
-			setSymbol(view, randomSymbolForReel(reelIndex));
-		}
-	}
+            setSymbol(view, randomSymbolForReel(reelIndex));
+        }
+    }
 }
 
 export function snapReelToResult({
-	reelViews,
-	reelIndex,
-	finalSymbols,
-	bufferRows,
-	symbolHeight,
-	randomSymbolForReel,
+    reelViews,
+    reelIndex,
+    finalSymbols,
+    bufferRows,
+    symbolHeight,
+    randomSymbolForReel,
 }) {
-	const reel = reelViews[reelIndex];
+    const reel = reelViews[reelIndex];
 
-	reel.views.forEach((view, index) => {
-		view.y = (index - bufferRows) * symbolHeight;
+    reel.views.forEach((view, index) => {
+        view.y = (index - bufferRows) * symbolHeight;
 
-		setSymbol(view, randomSymbolForReel(reelIndex));
-	});
+        setSymbol(view, randomSymbolForReel(reelIndex));
+    });
 
-	for (let row = 0; row < finalSymbols.length; row++) {
-		const view = reel.views[bufferRows + row];
+    for (let row = 0; row < finalSymbols.length; row++) {
+        const view = reel.views[bufferRows + row];
 
-		view.y = row * symbolHeight;
+        view.y = row * symbolHeight;
 
-		setSymbol(view, finalSymbols[row]);
-	}
+        setSymbol(view, finalSymbols[row]);
+    }
 }
 
 export function animateReel({
-	reelViews,
-	reelIndex,
-	finalSymbols,
-	duration,
-	gameHeight,
-	symbolHeight,
-	totalRenderedRows,
-	bufferRows,
-	randomSymbolForReel,
-	clamp,
+    reelViews,
+    reelIndex,
+    finalSymbols,
+    duration,
+    gameHeight,
+    symbolHeight,
+    totalRenderedRows,
+    bufferRows,
+    randomSymbolForReel,
+    clamp,
 }) {
-	return new Promise((resolve) => {
-		const reel = reelViews[reelIndex];
+    return new Promise((resolve) => {
+        const reel = reelViews[reelIndex];
 
-		const startTime = performance.now();
+        const startTime = performance.now();
 
-		let previousTime = startTime;
+        let previousTime = startTime;
 
-		const maxSpeed = 2.1 + reelIndex * 0.08;
+        const maxSpeed = 2.1 + reelIndex * 0.08;
 
-		function frame(now) {
-			const elapsed = now - startTime;
+        function frame(now) {
+            const elapsed = now - startTime;
 
-			const delta = Math.min(now - previousTime, 32);
+            const delta = Math.min(now - previousTime, 32);
 
-			previousTime = now;
+            previousTime = now;
 
-			const progress = clamp(elapsed / duration, 0, 1);
+            const progress = clamp(elapsed / duration, 0, 1);
 
-			let speedFactor;
+            let speedFactor;
 
-			if (progress < 0.15) {
-				speedFactor = progress / 0.15;
-			} else if (progress < 0.72) {
-				speedFactor = 1;
-			} else {
-				const stopProgress = (progress - 0.72) / 0.28;
+            if (progress < 0.15) {
+                speedFactor = progress / 0.15;
+            } else if (progress < 0.72) {
+                speedFactor = 1;
+            } else {
+                const stopProgress = (progress - 0.72) / 0.28;
 
-				speedFactor = 1 - stopProgress;
+                speedFactor = 1 - stopProgress;
 
-				speedFactor *= speedFactor;
-			}
+                speedFactor *= speedFactor;
+            }
 
-			const movement = maxSpeed * delta * speedFactor;
+            const movement = maxSpeed * delta * speedFactor;
 
-			for (const view of reel.views) {
-				view.y += movement;
-			}
+            for (const view of reel.views) {
+                view.y += movement;
+            }
 
-			recycleReelSymbols({
-				reelViews,
-				reelIndex,
-				gameHeight,
-				symbolHeight,
-				totalRenderedRows,
-				randomSymbolForReel,
-			});
+            recycleReelSymbols({
+                reelViews,
+                reelIndex,
+                gameHeight,
+                symbolHeight,
+                totalRenderedRows,
+                randomSymbolForReel,
+            });
 
-			if (progress < 1) {
-				requestAnimationFrame(frame);
-				return;
-			}
+            if (progress < 1) {
+                requestAnimationFrame(frame);
+                return;
+            }
 
-			snapReelToResult({
-				reelViews,
-				reelIndex,
-				finalSymbols,
-				bufferRows,
-				symbolHeight,
-				randomSymbolForReel,
-			});
+            snapReelToResult({
+                reelViews,
+                reelIndex,
+                finalSymbols,
+                bufferRows,
+                symbolHeight,
+                randomSymbolForReel,
+            });
 
-			const bounceDistance = 10;
+            const bounceDistance = 10;
 
-			reel.symbolsContainer.y = -bounceDistance;
+            reel.symbolsContainer.y = -bounceDistance;
 
-			const bounceStart = performance.now();
+            const bounceStart = performance.now();
 
-			const bounceDuration = 160;
+            const bounceDuration = 160;
 
-			function bounce(bounceNow) {
-				const p = clamp((bounceNow - bounceStart) / bounceDuration, 0, 1);
+            function bounce(bounceNow) {
+                const p = clamp((bounceNow - bounceStart) / bounceDuration, 0, 1);
 
-				const eased = 1 - Math.pow(1 - p, 3);
+                const eased = 1 - Math.pow(1 - p, 3);
 
-				reel.symbolsContainer.y = -bounceDistance * (1 - eased);
+                reel.symbolsContainer.y = -bounceDistance * (1 - eased);
 
-				if (p < 1) {
-					requestAnimationFrame(bounce);
-				} else {
-					reel.symbolsContainer.y = 0;
+                if (p < 1) {
+                    requestAnimationFrame(bounce);
+                } else {
+                    reel.symbolsContainer.y = 0;
 
-					resolve();
-				}
-			}
+                    resolve();
+                }
+            }
 
-			requestAnimationFrame(bounce);
-		}
+            requestAnimationFrame(bounce);
+        }
 
-		requestAnimationFrame(frame);
-	});
+        requestAnimationFrame(frame);
+    });
 }
 
 export async function animateReels({
-	reelViews,
-	result,
-	reelCount,
-	gameHeight,
-	symbolHeight,
-	totalRenderedRows,
-	bufferRows,
-	randomSymbolForReel,
-	clamp,
+    reelViews,
+    result,
+    reelCount,
+    gameHeight,
+    symbolHeight,
+    totalRenderedRows,
+    bufferRows,
+    randomSymbolForReel,
+    clamp,
 }) {
-	const animations = [];
+    const animations = [];
 
-	for (let reelIndex = 0; reelIndex < reelCount; reelIndex++) {
-		animations.push(
-			animateReel({
-				reelViews,
-				reelIndex,
-				finalSymbols: result[reelIndex],
-				duration: 800 + reelIndex * 180,
-				gameHeight,
-				symbolHeight,
-				totalRenderedRows,
-				bufferRows,
-				randomSymbolForReel,
-				clamp,
-			}),
-		);
-	}
+    for (let reelIndex = 0; reelIndex < reelCount; reelIndex++) {
+        animations.push(
+            animateReel({
+                reelViews,
+                reelIndex,
+                finalSymbols: result[reelIndex],
+                duration: 800 + reelIndex * 180,
+                gameHeight,
+                symbolHeight,
+                totalRenderedRows,
+                bufferRows,
+                randomSymbolForReel,
+                clamp,
+            })
+        );
+    }
 
-	await Promise.all(animations);
+    await Promise.all(animations);
 }
