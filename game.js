@@ -1,16 +1,15 @@
 'use strict';
 
 import { GAME_CONFIG } from './js/config/game-config.js';
-import { REEL_STRIPS } from './js/config/symbols.js';
 import { PAYTABLE } from './js/config/paytable.js';
 import { PAYLINES } from './js/config/paylines.js';
+import { REEL_COUNT, ROW_COUNT } from './js/config/counts.js';
 
 import { gameState } from './js/core/game-state.js';
-import { setSymbol } from './js/reels/reel.js';
 import { createReels, getVisibleView } from './js/reels/reel-manager.js';
+import { animateReels } from './js/reels/reel-animation.js';
+import { randomSymbolForReel, generateResult } from './js/core/random.js';
 
-const REEL_COUNT = 5;
-const ROW_COUNT = 3;
 
 const BUFFER_ROWS = 2;
 
@@ -23,7 +22,7 @@ const SYMBOL_WIDTH = GAME_WIDTH / REEL_COUNT;
 
 const SYMBOL_HEIGHT = GAME_HEIGHT / ROW_COUNT;
 
-const SYMBOL_GAP = 8;
+//const SYMBOL_GAP = 8;
 
 /* =========================================================
    DOM REFERENCES
@@ -73,15 +72,6 @@ let reelViews = [];
    GENERAL HELPERS
 ========================================================= */
 
-function randomInt(max) {
-	return Math.floor(Math.random() * max);
-}
-
-function randomSymbolForReel(reelIndex) {
-	const strip = REEL_STRIPS[reelIndex];
-
-	return strip[randomInt(strip.length)];
-}
 
 function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -214,195 +204,6 @@ function createBackground() {
 	reelLayer.addChild(background);
 }
 
-/* =========================================================
-   GENERATE RESULT
-========================================================= */
-
-function generateResult() {
-	const result = [];
-
-	for (let reelIndex = 0; reelIndex < REEL_COUNT; reelIndex++) {
-		const strip = REEL_STRIPS[reelIndex];
-
-		const stop = randomInt(strip.length);
-
-		const column = [];
-
-		for (let row = 0; row < ROW_COUNT; row++) {
-			const index = (stop + row) % strip.length;
-
-			column.push(strip[index]);
-		}
-
-		result.push(column);
-	}
-
-	return result;
-}
-
-/* =========================================================
-   REEL RECYCLING
-========================================================= */
-
-function recycleReelSymbols(reelIndex) {
-	const reel = reelViews[reelIndex];
-
-	for (const view of reel.views) {
-		while (view.y >= GAME_HEIGHT + SYMBOL_HEIGHT) {
-			view.y -= TOTAL_RENDERED_ROWS * SYMBOL_HEIGHT;
-
-			setSymbol(
-				view,
-
-				randomSymbolForReel(reelIndex),
-			);
-		}
-	}
-}
-
-/* =========================================================
-   SNAP REEL TO FINAL RESULT
-========================================================= */
-
-function snapReelToResult(reelIndex, finalSymbols) {
-	const reel = reelViews[reelIndex];
-
-	reel.views.forEach((view, index) => {
-		view.y = (index - BUFFER_ROWS) * SYMBOL_HEIGHT;
-
-		setSymbol(
-			view,
-
-			randomSymbolForReel(reelIndex),
-		);
-	});
-
-	for (let row = 0; row < ROW_COUNT; row++) {
-		const view = reel.views[BUFFER_ROWS + row];
-
-		view.y = row * SYMBOL_HEIGHT;
-
-		setSymbol(view, finalSymbols[row]);
-	}
-}
-
-/* =========================================================
-   REEL ANIMATION
-========================================================= */
-
-function animateReel(reelIndex, finalSymbols, duration) {
-	return new Promise((resolve) => {
-		const reel = reelViews[reelIndex];
-
-		const startTime = performance.now();
-
-		let previousTime = startTime;
-
-		const maxSpeed = 2.1 + reelIndex * 0.08;
-
-		function frame(now) {
-			const elapsed = now - startTime;
-
-			const delta = Math.min(now - previousTime, 32);
-
-			previousTime = now;
-
-			const progress = clamp(
-				elapsed / duration,
-
-				0,
-
-				1,
-			);
-
-			let speedFactor;
-
-			if (progress < 0.15) {
-				speedFactor = progress / 0.15;
-			} else if (progress < 0.72) {
-				speedFactor = 1;
-			} else {
-				const stopProgress = (progress - 0.72) / 0.28;
-
-				speedFactor = 1 - stopProgress;
-
-				speedFactor *= speedFactor;
-			}
-
-			const movement = maxSpeed * delta * speedFactor;
-
-			for (const view of reel.views) {
-				view.y += movement;
-			}
-
-			recycleReelSymbols(reelIndex);
-
-			if (progress < 1) {
-				requestAnimationFrame(frame);
-
-				return;
-			}
-
-			snapReelToResult(reelIndex, finalSymbols);
-
-			const bounceDistance = 10;
-
-			reel.symbolsContainer.y = -bounceDistance;
-
-			const bounceStart = performance.now();
-
-			const bounceDuration = 160;
-
-			function bounce(bounceNow) {
-				const p = clamp(
-					(bounceNow - bounceStart) / bounceDuration,
-
-					0,
-
-					1,
-				);
-
-				const eased = 1 - Math.pow(1 - p, 3);
-
-				reel.symbolsContainer.y = -bounceDistance * (1 - eased);
-
-				if (p < 1) {
-					requestAnimationFrame(bounce);
-				} else {
-					reel.symbolsContainer.y = 0;
-
-					resolve();
-				}
-			}
-
-			requestAnimationFrame(bounce);
-		}
-
-		requestAnimationFrame(frame);
-	});
-}
-
-/* =========================================================
-   ANIMATE ALL REELS
-========================================================= */
-
-async function animateReels(result) {
-	const animations = [];
-
-	for (let reelIndex = 0; reelIndex < REEL_COUNT; reelIndex++) {
-		animations.push(
-			animateReel(
-				reelIndex,
-
-				result[reelIndex],
-
-				800 + reelIndex * 180,
-			),
-		);
-	}
-
-	await Promise.all(animations);
-}
 
 /* =========================================================
    GET PAYLINE SYMBOLS
@@ -933,7 +734,17 @@ async function spin() {
 	 */
 	const result = generateResult();
 
-	await animateReels(result);
+	await animateReels({
+        reelViews,
+        result,
+        reelCount: REEL_COUNT,
+        gameHeight: GAME_HEIGHT,
+        symbolHeight: SYMBOL_HEIGHT,
+        totalRenderedRows: TOTAL_RENDERED_ROWS,
+        bufferRows: BUFFER_ROWS,
+        randomSymbolForReel,
+        clamp
+    });
 	console.table({
 		reel1: result[0],
 		reel2: result[1],
