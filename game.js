@@ -15,6 +15,7 @@ import { increaseBet, decreaseBet, maxBet } from "./js/game/bet-controls.js";
 import { setupEventHandlers } from "./js/game/event-handlers.js";
 import { spin } from "./js/game/spin.js";
 import { clamp } from "./js/utils/helpers.js";
+import { audioManager } from "./js/audio/audio-manager.js";
 
 const BUFFER_ROWS = 2;
 
@@ -88,6 +89,10 @@ async function init() {
         decreaseBet,
         maxBet
     );
+
+    // Initialize audio and start background music
+    audioManager.init();
+    audioManager.startBackgroundMusic();
 }
 
 /* =========================================================

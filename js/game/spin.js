@@ -7,6 +7,7 @@ import { presentWins } from "../visuals/win-presentation.js";
 import { setControlsDisabled } from "./bet-controls.js";
 import { messageElement, winElement } from "../ui/dom.js";
 import { updateUI } from "../ui/ui-updater.js";
+import { audioManager } from "../audio/audio-manager.js";
 
 /* =========================================================
    SPIN
@@ -64,6 +65,8 @@ export async function spin({
 
     messageElement.textContent = isFreeSpin ? "FREE SPIN" : "GOOD LUCK";
 
+    audioManager.playSpinSound();
+
     /*
      * Determine the result before starting the animation.
      */
@@ -113,6 +116,7 @@ export async function spin({
      * Present a free-spin trigger first.
      */
     if (scatterResult.awarded > 0) {
+        audioManager.playScatterSound();
         highlightScatters(
             scatterResult.positions,
             reelViews,

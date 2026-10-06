@@ -24,6 +24,10 @@ export const maxBetButton = document.getElementById("maxBetButton");
 
 export const paytableButton = document.getElementById("paytableButton");
 
+export const musicToggle = document.getElementById("musicToggle");
+
+export const muteToggle = document.getElementById("muteToggle");
+
 export const getPaytableModal = () => document.getElementById("paytableModal");
 
 export const getClosePaytableButton = () => document.getElementById("closePaytable");

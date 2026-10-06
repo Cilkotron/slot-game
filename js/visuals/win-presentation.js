@@ -2,6 +2,7 @@ import { gameState } from "../core/game-state.js";
 import { sleep, formatMoney } from "../utils/helpers.js";
 import { highlightWin, highlightAllWins, resetSymbolVisuals } from "./symbol-visuals.js";
 import { drawPayline } from "./payline-drawing.js";
+import { audioManager } from "../audio/audio-manager.js";
 
 /* =========================================================
    PRESENT WINS
@@ -23,6 +24,13 @@ export async function presentWins(
         resetSymbolVisuals(reelViews, paylineLayer, BUFFER_ROWS, SYMBOL_HEIGHT);
 
         return;
+    }
+
+    // Play win sound
+    if (totalWin >= gameState.bet * 10) {
+        audioManager.playBigWinSound();
+    } else {
+        audioManager.playWinSound();
     }
 
     for (const win of wins) {
