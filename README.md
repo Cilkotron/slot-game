@@ -1,10 +1,10 @@
-# Fruit Basket Slot Game
+# Honey Pot Slot Game
 
 A simple HTML5 slot machine game built with PixiJS and Tailwind CSS.
 
 ## Features
 
-- 5-reel slot machine with fruit symbols
+- 5-reel slot machine with flower symbols
 - Multiple paylines
 - Wild and Scatter symbols
 - Free spins feature
@@ -93,17 +93,18 @@ This uses Prettier to format all JavaScript, HTML, and CSS files.
 1. **Set your bet** using the + and - buttons, or click MAX for maximum bet
 2. **Click SPIN** (or press Space) to spin the reels
 3. **Match symbols** across paylines to win
-4. **Land 3+ Pineapples** to trigger free spins
+4. **Land 3+ Honey Jars** to trigger free spins
 5. **Click PAY** to view the paytable
 
 ## Symbols
 
-- 🍎 Apple
-- 🍑 Peach
-- 🍋 Lemon
-- 🍒 Cherry
-- 🍍 Pineapple (Scatter - triggers free spins)
-- ⭐ Wild (substitutes for all symbols except Scatter)
+- 🌻 Sunflower
+- 🌸 Cherry Blossom
+- 🌺 Hibiscus
+- 🌼 Daisy
+- 🌿 Leaves
+- 🐝 Bee (Wild - substitutes for all symbols except Scatter)
+- 🍯 Honey Jar (Scatter - triggers free spins)
 
 ## Technologies
 

@@ -43,11 +43,11 @@ export function processFreeSpins(result, isFreeSpin) {
 
     if (canAward) {
         if (count >= 5) {
-            awarded = 12;
+            awarded = 20;
         } else if (count === 4) {
-            awarded = 8;
+            awarded = 15;
         } else if (count === 3) {
-            awarded = 5;
+            awarded = 10;
         }
     }
 
