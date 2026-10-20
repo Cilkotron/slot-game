@@ -1,11 +1,12 @@
 import { setSymbol } from "./reel.js";
 import gsap from "gsap";
 
-export function recycleReelSymbols({
+export async function recycleReelSymbols({
     reelViews,
     reelIndex,
     gameHeight,
     symbolHeight,
+    symbolWidth,
     totalRenderedRows,
     randomSymbolForReel,
 }) {
@@ -15,33 +16,34 @@ export function recycleReelSymbols({
         while (view.y >= gameHeight + symbolHeight) {
             view.y -= totalRenderedRows * symbolHeight;
 
-            setSymbol(view, randomSymbolForReel(reelIndex));
+            await setSymbol(view, randomSymbolForReel(reelIndex), symbolWidth, symbolHeight);
         }
     }
 }
 
-export function snapReelToResult({
+export async function snapReelToResult({
     reelViews,
     reelIndex,
     finalSymbols,
     bufferRows,
     symbolHeight,
+    symbolWidth,
     randomSymbolForReel,
 }) {
     const reel = reelViews[reelIndex];
 
-    reel.views.forEach((view, index) => {
-        view.y = (index - bufferRows) * symbolHeight;
+    for (const view of reel.views) {
+        view.y = (view.slotIndex - bufferRows) * symbolHeight;
 
-        setSymbol(view, randomSymbolForReel(reelIndex));
-    });
+        await setSymbol(view, randomSymbolForReel(reelIndex), symbolWidth, symbolHeight);
+    }
 
     for (let row = 0; row < finalSymbols.length; row++) {
         const view = reel.views[bufferRows + row];
 
         view.y = row * symbolHeight;
 
-        setSymbol(view, finalSymbols[row]);
+        await setSymbol(view, finalSymbols[row], symbolWidth, symbolHeight);
     }
 }
 
@@ -52,6 +54,7 @@ export function animateReel({
     duration,
     gameHeight,
     symbolHeight,
+    symbolWidth,
     totalRenderedRows,
     bufferRows,
     randomSymbolForReel,
@@ -66,7 +69,7 @@ export function animateReel({
 
         const maxSpeed = 2.1 + reelIndex * 0.08;
 
-        function frame(now) {
+        async function frame(now) {
             const elapsed = now - startTime;
 
             const delta = Math.min(now - previousTime, 32);
@@ -95,11 +98,12 @@ export function animateReel({
                 view.y += movement;
             }
 
-            recycleReelSymbols({
+            await recycleReelSymbols({
                 reelViews,
                 reelIndex,
                 gameHeight,
                 symbolHeight,
+                symbolWidth,
                 totalRenderedRows,
                 randomSymbolForReel,
             });
@@ -109,26 +113,24 @@ export function animateReel({
                 return;
             }
 
-            snapReelToResult({
+            await snapReelToResult({
                 reelViews,
                 reelIndex,
                 finalSymbols,
                 bufferRows,
                 symbolHeight,
+                symbolWidth,
                 randomSymbolForReel,
             });
 
             // GSAP bounce animation
-            gsap.fromTo(
-                reel.symbolsContainer,
-                { y: -10 },
-                {
-                    y: 0,
-                    duration: 0.16,
-                    ease: "power3.out",
-                    onComplete: resolve,
-                }
-            );
+            reel.symbolsContainer.y = -10;
+            gsap.to(reel.symbolsContainer, {
+                y: 0,
+                duration: 0.16,
+                ease: "power3.out",
+                onComplete: resolve,
+            });
         }
 
         requestAnimationFrame(frame);
@@ -141,6 +143,7 @@ export async function animateReels({
     reelCount,
     gameHeight,
     symbolHeight,
+    symbolWidth,
     totalRenderedRows,
     bufferRows,
     randomSymbolForReel,
@@ -157,6 +160,7 @@ export async function animateReels({
                 duration: 800 + reelIndex * 180,
                 gameHeight,
                 symbolHeight,
+                symbolWidth,
                 totalRenderedRows,
                 bufferRows,
                 randomSymbolForReel,

@@ -1,0 +1,77 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <radialGradient id="lotusGradient" cx="35%" cy="25%" r="80%">
+      <stop offset="0%" stop-color="#B9FFF8"/>
+      <stop offset="40%" stop-color="#22D3C5"/>
+      <stop offset="75%" stop-color="#087EAB"/>
+      <stop offset="100%" stop-color="#263B80"/>
+    </radialGradient>
+
+    <linearGradient id="innerPetal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0FFFF"/>
+      <stop offset="45%" stop-color="#A5E8FF"/>
+      <stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
+
+    <radialGradient id="centerGradient" cx="35%" cy="25%" r="75%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="55%" stop-color="#D9F99D"/>
+      <stop offset="100%" stop-color="#84CC16"/>
+    </radialGradient>
+
+    <filter id="petalShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow
+        dx="0"
+        dy="1.5"
+        stdDeviation="1.5"
+        flood-color="#102A56"
+        flood-opacity="0.3"
+      />
+    </filter>
+  </defs>
+
+  <!-- Outer petals -->
+  <g filter="url(#petalShadow)">
+    <ellipse cx="64" cy="27" rx="14" ry="28" fill="url(#lotusGradient)"/>
+    <ellipse cx="64" cy="27" rx="14" ry="28" fill="url(#lotusGradient)" transform="rotate(45 64 64)"/>
+    <ellipse cx="64" cy="27" rx="14" ry="28" fill="url(#lotusGradient)" transform="rotate(90 64 64)"/>
+    <ellipse cx="64" cy="27" rx="14" ry="28" fill="url(#lotusGradient)" transform="rotate(135 64 64)"/>
+    <ellipse cx="64" cy="27" rx="14" ry="28" fill="url(#lotusGradient)" transform="rotate(180 64 64)"/>
+    <ellipse cx="64" cy="27" rx="14" ry="28" fill="url(#lotusGradient)" transform="rotate(225 64 64)"/>
+    <ellipse cx="64" cy="27" rx="14" ry="28" fill="url(#lotusGradient)" transform="rotate(270 64 64)"/>
+    <ellipse cx="64" cy="27" rx="14" ry="28" fill="url(#lotusGradient)" transform="rotate(315 64 64)"/>
+  </g>
+
+  <!-- Inner petals -->
+  <g>
+    <ellipse cx="64" cy="39" rx="9" ry="20" fill="url(#innerPetal)" transform="rotate(22.5 64 64)"/>
+    <ellipse cx="64" cy="39" rx="9" ry="20" fill="url(#innerPetal)" transform="rotate(67.5 64 64)"/>
+    <ellipse cx="64" cy="39" rx="9" ry="20" fill="url(#innerPetal)" transform="rotate(112.5 64 64)"/>
+    <ellipse cx="64" cy="39" rx="9" ry="20" fill="url(#innerPetal)" transform="rotate(157.5 64 64)"/>
+    <ellipse cx="64" cy="39" rx="9" ry="20" fill="url(#innerPetal)" transform="rotate(202.5 64 64)"/>
+    <ellipse cx="64" cy="39" rx="9" ry="20" fill="url(#innerPetal)" transform="rotate(247.5 64 64)"/>
+    <ellipse cx="64" cy="39" rx="9" ry="20" fill="url(#innerPetal)" transform="rotate(292.5 64 64)"/>
+    <ellipse cx="64" cy="39" rx="9" ry="20" fill="url(#innerPetal)" transform="rotate(337.5 64 64)"/>
+  </g>
+
+  <!-- Center -->
+  <rect x="60" y="45" width="8" height="32" rx="4" fill="url(#centerGradient)"/>
+  <circle cx="64" cy="42" r="8" fill="url(#centerGradient)"/>
+  <circle cx="64" cy="42" r="4.5" fill="#65A30D"/>
+
+  <!-- Stamens -->
+  <g stroke="#FDE68A" stroke-width="2" stroke-linecap="round">
+    <path d="M64 42 L54 28"/>
+    <path d="M64 42 L74 28"/>
+    <path d="M64 42 L50 34"/>
+    <path d="M64 42 L78 34"/>
+  </g>
+
+  <g fill="#F59E0B" stroke="#FFF7CC" stroke-width="0.7">
+    <circle cx="54" cy="28" r="3"/>
+    <circle cx="74" cy="28" r="3"/>
+    <circle cx="50" cy="34" r="3"/>
+    <circle cx="78" cy="34" r="3"/>
+  </g>
+</svg>

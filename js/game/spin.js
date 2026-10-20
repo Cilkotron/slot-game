@@ -83,6 +83,7 @@ export async function spin({
         reelCount: REEL_COUNT,
         gameHeight: GAME_HEIGHT,
         symbolHeight: SYMBOL_HEIGHT,
+        symbolWidth: SYMBOL_WIDTH,
         totalRenderedRows: TOTAL_RENDERED_ROWS,
         bufferRows: BUFFER_ROWS,
         randomSymbolForReel,

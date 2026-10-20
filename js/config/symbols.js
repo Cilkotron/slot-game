@@ -3,13 +3,13 @@
 ========================================================= */
 
 export const SYMBOL_ICONS = {
-    A: "🌻",
-    K: "🌸",
-    Q: "🌺",
-    J: "🌼",
-    SEVEN: "🌿",
-    WILD: "🐝",
-    SCATTER: "🍯",
+    A: "/assets/symbols/sunflower.svg",
+    K: "/assets/symbols/cherry-blossom.svg",
+    Q: "/assets/symbols/hibiscus.svg",
+    J: "/assets/symbols/daisy.svg",
+    SEVEN: "/assets/symbols/leaves.svg",
+    WILD: "/assets/symbols/bee.svg",
+    SCATTER: "/assets/symbols/honey-jar.svg",
 };
 
 /* =========================================================

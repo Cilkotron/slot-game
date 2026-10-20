@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <!-- Outer petals -->
+    <radialGradient id="petalOuter" cx="50%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="70%" stop-color="#FFFDF0"/>
+      <stop offset="100%" stop-color="#F2E6B8"/>
+    </radialGradient>
+
+    <!-- Inner petals -->
+    <radialGradient id="petalInner" cx="50%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#FFFDF0"/>
+      <stop offset="100%" stop-color="#F3DFA0"/>
+    </radialGradient>
+
+    <!-- Flower center -->
+    <radialGradient id="center" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FFE66D"/>
+      <stop offset="55%" stop-color="#FFD21C"/>
+      <stop offset="100%" stop-color="#E9A800"/>
+    </radialGradient>
+
+    <!-- Subtle shadow -->
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.5"
+                    flood-color="#B89A45" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <!-- Outer petals -->
+  <g fill="url(#petalOuter)"
+     stroke="#E8D99E"
+     stroke-width="0.8"
+     filter="url(#shadow)">
+
+    <ellipse cx="64" cy="24" rx="10" ry="25"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(30 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(60 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(90 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(120 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(150 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(180 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(210 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(240 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(270 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(300 64 64)"/>
+    <ellipse cx="64" cy="24" rx="10" ry="25" transform="rotate(330 64 64)"/>
+  </g>
+
+  <!-- Inner petals -->
+  <g fill="url(#petalInner)"
+     stroke="#E1CA7A"
+     stroke-width="0.7">
+
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(15 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(45 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(75 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(105 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(135 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(165 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(195 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(225 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(255 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(285 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(315 64 64)"/>
+    <ellipse cx="64" cy="37" rx="7" ry="18" transform="rotate(345 64 64)"/>
+  </g>
+
+  <!-- Center -->
+  <circle cx="64" cy="64" r="15" fill="url(#center)"
+          stroke="#D89B00" stroke-width="0.8"/>
+
+  <circle cx="64" cy="64" r="10.5" fill="#FFD52A"/>
+
+  <!-- Center texture -->
+  <g fill="#C88B00">
+    <circle cx="60" cy="60" r="1.4"/>
+    <circle cx="68" cy="60" r="1.4"/>
+    <circle cx="64" cy="56.5" r="1.4"/>
+    <circle cx="58.5" cy="64" r="1.4"/>
+    <circle cx="69.5" cy="64" r="1.4"/>
+    <circle cx="60" cy="68" r="1.4"/>
+    <circle cx="68" cy="68" r="1.4"/>
+    <circle cx="64" cy="71.5" r="1.4"/>
+  </g>
+</svg>

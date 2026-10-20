@@ -1,6 +1,6 @@
 import { createSymbolView, setSymbol } from "./reel.js";
 
-export function createReels({
+export async function createReels({
     reelLayer,
     reelCount,
     totalRenderedRows,
@@ -34,7 +34,7 @@ export function createReels({
         const views = [];
 
         for (let slotIndex = 0; slotIndex < totalRenderedRows; slotIndex++) {
-            const view = createSymbolView({
+            const view = await createSymbolView({
                 reelIndex,
                 slotIndex,
                 symbolWidth,
@@ -44,7 +44,7 @@ export function createReels({
 
             view.y = (slotIndex - bufferRows) * symbolHeight;
 
-            setSymbol(view, randomSymbolForReel(reelIndex));
+            await setSymbol(view, randomSymbolForReel(reelIndex), symbolWidth, symbolHeight);
 
             symbolsContainer.addChild(view);
 

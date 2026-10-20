@@ -50,7 +50,7 @@ async function init() {
 
     createBackground(reelLayer, GAME_WIDTH, GAME_HEIGHT);
 
-    reelViews = createReels({
+    reelViews = await createReels({
         reelLayer,
         reelCount: REEL_COUNT,
         totalRenderedRows: TOTAL_RENDERED_ROWS,
