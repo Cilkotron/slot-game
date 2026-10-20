@@ -5,10 +5,13 @@ import {
     maxBetButton,
     musicToggle,
     muteToggle,
+    stopAutoPlayButton,
     getPaytableModal,
 } from "../ui/dom.js";
 import { setupPaytableModal, closePaytable } from "./paytable-modal.js";
 import { audioManager } from "../audio/audio-manager.js";
+import { gameState } from "../core/game-state.js";
+import gsap from "gsap";
 
 /* =========================================================
    EVENT HANDLERS
@@ -17,6 +20,7 @@ import { audioManager } from "../audio/audio-manager.js";
 export function setupEventHandlers(spin, increaseBet, decreaseBet, maxBet) {
     spinButton.addEventListener("click", () => {
         audioManager.playButtonClick();
+        gsap.fromTo(spinButton, { scale: 0.95 }, { scale: 1, duration: 0.1 });
         spin();
     });
 
@@ -36,6 +40,23 @@ export function setupEventHandlers(spin, increaseBet, decreaseBet, maxBet) {
     });
 
     setupPaytableModal();
+
+    // Stop autoplay button
+    stopAutoPlayButton.addEventListener("click", () => {
+        audioManager.playButtonClick();
+        gameState.autoPlayEnabled = false;
+        gsap.fromTo(stopAutoPlayButton, { scale: 0.95 }, { scale: 1, duration: 0.1 });
+    });
+
+    // Button hover effects
+    [spinButton, betUpButton, betDownButton, maxBetButton, musicToggle, muteToggle, stopAutoPlayButton].forEach((button) => {
+        button.addEventListener("mouseenter", () => {
+            gsap.to(button, { scale: 1.05, duration: 0.2 });
+        });
+        button.addEventListener("mouseleave", () => {
+            gsap.to(button, { scale: 1, duration: 0.2 });
+        });
+    });
 
     // Audio control buttons
     musicToggle.addEventListener("click", () => {

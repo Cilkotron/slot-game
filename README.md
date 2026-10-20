@@ -1,4 +1,4 @@
-# Honey Pot Slot Game
+# Honey Jar Slot Game
 
 A simple HTML5 slot machine game built with PixiJS and Tailwind CSS.
 
@@ -9,7 +9,8 @@ A simple HTML5 slot machine game built with PixiJS and Tailwind CSS.
 - Wild and Scatter symbols
 - Free spins feature
 - Responsive design
-- Smooth animations
+- Smooth animations powered by GSAP
+- PixiJS for high-performance canvas rendering
 
 ## Getting Started
 
@@ -108,7 +109,8 @@ This uses Prettier to format all JavaScript, HTML, and CSS files.
 
 ## Technologies
 
-- **PixiJS v8** - Graphics rendering
+- **PixiJS v8** - Graphics rendering for reels and symbols
+- **GSAP** - Animation library for smooth UI and canvas effects
 - **Tailwind CSS** - Styling
 - **Vite** - Development server
 - **Prettier** - Code formatting

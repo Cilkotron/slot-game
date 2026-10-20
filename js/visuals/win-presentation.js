@@ -3,6 +3,7 @@ import { sleep, formatMoney } from "../utils/helpers.js";
 import { highlightWin, highlightAllWins, resetSymbolVisuals } from "./symbol-visuals.js";
 import { drawPayline } from "./payline-drawing.js";
 import { audioManager } from "../audio/audio-manager.js";
+import gsap from "gsap";
 
 /* =========================================================
    PRESENT WINS
@@ -44,6 +45,13 @@ export async function presentWins(
 
         messageElement.textContent =
             `LINE ${win.lineIndex + 1} • ` + `WIN ${formatMoney(win.amount)}`;
+
+        // Animate message appearance
+        gsap.fromTo(
+            messageElement,
+            { scale: 1.2, alpha: 0 },
+            { scale: 1, alpha: 1, duration: 0.3, ease: "back.out(1.7)" }
+        );
 
         await sleep(750);
     }

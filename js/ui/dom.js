@@ -28,6 +28,10 @@ export const musicToggle = document.getElementById("musicToggle");
 
 export const muteToggle = document.getElementById("muteToggle");
 
+export const stopAutoPlayButton = document.getElementById("stopAutoPlay");
+
+export const stopAutoPlayContainer = document.getElementById("stopAutoPlayContainer");
+
 export const getPaytableModal = () => document.getElementById("paytableModal");
 
 export const getClosePaytableButton = () => document.getElementById("closePaytable");

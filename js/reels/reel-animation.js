@@ -1,4 +1,5 @@
 import { setSymbol } from "./reel.js";
+import gsap from "gsap";
 
 export function recycleReelSymbols({
     reelViews,
@@ -117,31 +118,17 @@ export function animateReel({
                 randomSymbolForReel,
             });
 
-            const bounceDistance = 10;
-
-            reel.symbolsContainer.y = -bounceDistance;
-
-            const bounceStart = performance.now();
-
-            const bounceDuration = 160;
-
-            function bounce(bounceNow) {
-                const p = clamp((bounceNow - bounceStart) / bounceDuration, 0, 1);
-
-                const eased = 1 - Math.pow(1 - p, 3);
-
-                reel.symbolsContainer.y = -bounceDistance * (1 - eased);
-
-                if (p < 1) {
-                    requestAnimationFrame(bounce);
-                } else {
-                    reel.symbolsContainer.y = 0;
-
-                    resolve();
+            // GSAP bounce animation
+            gsap.fromTo(
+                reel.symbolsContainer,
+                { y: -10 },
+                {
+                    y: 0,
+                    duration: 0.16,
+                    ease: "power3.out",
+                    onComplete: resolve,
                 }
-            }
-
-            requestAnimationFrame(bounce);
+            );
         }
 
         requestAnimationFrame(frame);

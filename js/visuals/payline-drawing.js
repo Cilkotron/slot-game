@@ -1,3 +1,5 @@
+import gsap from "gsap";
+
 /* =========================================================
    DRAW WINNING PAYLINE
 
@@ -53,4 +55,11 @@ export function drawPayline(paylineLayer, line, count, SYMBOL_WIDTH, SYMBOL_HEIG
     paylineLayer.addChild(outline);
 
     paylineLayer.addChild(lineGraphic);
+
+    // Animate the payline appearance
+    outline.alpha = 0;
+    lineGraphic.alpha = 0;
+
+    gsap.to(outline, { alpha: 0.7, duration: 0.3 });
+    gsap.to(lineGraphic, { alpha: 1, duration: 0.3 });
 }

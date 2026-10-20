@@ -17,4 +17,6 @@ export const gameState = {
     betOptions: GAME_CONFIG.betOptions,
 
     betIndex: GAME_CONFIG.betOptions.indexOf(GAME_CONFIG.defaultBet),
+
+    autoPlayEnabled: true,
 };

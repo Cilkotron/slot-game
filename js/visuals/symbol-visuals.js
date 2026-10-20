@@ -1,5 +1,6 @@
 import { REEL_COUNT, ROW_COUNT } from "../config/counts.js";
 import { getVisibleView } from "../reels/reel-manager.js";
+import gsap from "gsap";
 
 /* =========================================================
    RESET SYMBOL VISUALS
@@ -10,13 +11,22 @@ export function resetSymbolVisuals(reelViews, paylineLayer, BUFFER_ROWS, SYMBOL_
         for (let row = 0; row < ROW_COUNT; row++) {
             const view = getVisibleView(reelViews, reel, row, BUFFER_ROWS);
 
-            view.alpha = 1;
+            gsap.to(view, {
+                alpha: 1,
+                duration: 0.2,
+            });
 
-            view.scale.set(1);
+            gsap.to(view.scale, {
+                x: 1,
+                y: 1,
+                duration: 0.2,
+            });
 
-            view.x = 0;
-
-            view.y = row * SYMBOL_HEIGHT;
+            gsap.to(view, {
+                x: 0,
+                y: row * SYMBOL_HEIGHT,
+                duration: 0.2,
+            });
         }
     }
 
@@ -42,7 +52,10 @@ export function highlightWin(
      */
     for (let reel = 0; reel < REEL_COUNT; reel++) {
         for (let row = 0; row < ROW_COUNT; row++) {
-            getVisibleView(reelViews, reel, row, BUFFER_ROWS).alpha = 0.28;
+            gsap.to(getVisibleView(reelViews, reel, row, BUFFER_ROWS), {
+                alpha: 0.28,
+                duration: 0.2,
+            });
         }
     }
 
@@ -55,15 +68,25 @@ export function highlightWin(
 
         const view = getVisibleView(reelViews, reel, row, BUFFER_ROWS);
 
-        view.alpha = 1;
-
         const scale = 1.06;
 
-        view.scale.set(scale);
+        gsap.to(view, {
+            alpha: 1,
+            duration: 0.2,
+        });
 
-        view.x = -(SYMBOL_WIDTH * (scale - 1)) / 2;
+        gsap.to(view.scale, {
+            x: scale,
+            y: scale,
+            duration: 0.2,
+            ease: "back.out(1.7)",
+        });
 
-        view.y = row * SYMBOL_HEIGHT - (SYMBOL_HEIGHT * (scale - 1)) / 2;
+        gsap.to(view, {
+            x: -(SYMBOL_WIDTH * (scale - 1)) / 2,
+            y: row * SYMBOL_HEIGHT - (SYMBOL_HEIGHT * (scale - 1)) / 2,
+            duration: 0.2,
+        });
     }
 }
 
@@ -96,17 +119,30 @@ export function highlightAllWins(
             const key = `${reel}:${row}`;
 
             if (winningPositions.has(key)) {
-                view.alpha = 1;
-
                 const scale = 1.04;
 
-                view.scale.set(scale);
+                gsap.to(view, {
+                    alpha: 1,
+                    duration: 0.2,
+                });
 
-                view.x = -(SYMBOL_WIDTH * (scale - 1)) / 2;
+                gsap.to(view.scale, {
+                    x: scale,
+                    y: scale,
+                    duration: 0.2,
+                    ease: "back.out(1.7)",
+                });
 
-                view.y = row * SYMBOL_HEIGHT - (SYMBOL_HEIGHT * (scale - 1)) / 2;
+                gsap.to(view, {
+                    x: -(SYMBOL_WIDTH * (scale - 1)) / 2,
+                    y: row * SYMBOL_HEIGHT - (SYMBOL_HEIGHT * (scale - 1)) / 2,
+                    duration: 0.2,
+                });
             } else {
-                view.alpha = 0.4;
+                gsap.to(view, {
+                    alpha: 0.4,
+                    duration: 0.2,
+                });
             }
         }
     }
@@ -128,21 +164,34 @@ export function highlightScatters(
 
     for (let reel = 0; reel < REEL_COUNT; reel++) {
         for (let row = 0; row < ROW_COUNT; row++) {
-            getVisibleView(reelViews, reel, row, BUFFER_ROWS).alpha = 0.3;
+            gsap.to(getVisibleView(reelViews, reel, row, BUFFER_ROWS), {
+                alpha: 0.3,
+                duration: 0.2,
+            });
         }
     }
 
     for (const position of positions) {
         const view = getVisibleView(reelViews, position.reel, position.row, BUFFER_ROWS);
 
-        view.alpha = 1;
-
         const scale = 1.08;
 
-        view.scale.set(scale);
+        gsap.to(view, {
+            alpha: 1,
+            duration: 0.2,
+        });
 
-        view.x = -(SYMBOL_WIDTH * (scale - 1)) / 2;
+        gsap.to(view.scale, {
+            x: scale,
+            y: scale,
+            duration: 0.2,
+            ease: "back.out(1.7)",
+        });
 
-        view.y = position.row * SYMBOL_HEIGHT - (SYMBOL_HEIGHT * (scale - 1)) / 2;
+        gsap.to(view, {
+            x: -(SYMBOL_WIDTH * (scale - 1)) / 2,
+            y: position.row * SYMBOL_HEIGHT - (SYMBOL_HEIGHT * (scale - 1)) / 2,
+            duration: 0.2,
+        });
     }
 }

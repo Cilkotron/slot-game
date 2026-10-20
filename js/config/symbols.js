@@ -65,6 +65,11 @@ export const REEL_STRIPS = [
         "K",
         "Q",
         "WILD",
+        "A",
+        "J",
+        "K",
+        "Q",
+        "SCATTER",
     ],
 
     [
@@ -110,6 +115,10 @@ export const REEL_STRIPS = [
         "K",
         "Q",
         "WILD",
+        "K",
+        "A",
+        "J",
+        "SCATTER",
     ],
 
     [
@@ -160,6 +169,9 @@ export const REEL_STRIPS = [
         "K",
 
         "WILD",
+        "A",
+        "K",
+        "SCATTER",
     ],
 
     [
@@ -210,6 +222,9 @@ export const REEL_STRIPS = [
         "Q",
 
         "WILD",
+        "K",
+        "Q",
+        "SCATTER",
     ],
 
     [
@@ -260,5 +275,8 @@ export const REEL_STRIPS = [
         "Q",
 
         "WILD",
+        "A",
+        "Q",
+        "SCATTER",
     ],
 ];

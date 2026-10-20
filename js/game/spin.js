@@ -1,12 +1,12 @@
 import { gameState } from "../core/game-state.js";
-import { sleep, roundMoney, formatMoney, clamp } from "../utils/helpers.js";
+import { sleep, roundMoney, formatMoney } from "../utils/helpers.js";
 import { calculateWins } from "../win-evaluation/win-calculator.js";
 import { processFreeSpins } from "../win-evaluation/scatter-handler.js";
 import { resetSymbolVisuals, highlightScatters } from "../visuals/symbol-visuals.js";
 import { presentWins } from "../visuals/win-presentation.js";
 import { setControlsDisabled } from "./bet-controls.js";
-import { messageElement, winElement } from "../ui/dom.js";
-import { updateUI } from "../ui/ui-updater.js";
+import { messageElement, winElement, betElement } from "../ui/dom.js";
+import { animateBalance, animateWin, animateFreeSpins } from "../ui/ui-updater.js";
 import { audioManager } from "../audio/audio-manager.js";
 
 /* =========================================================
@@ -57,11 +57,16 @@ export async function spin({
      */
     if (isFreeSpin) {
         gameState.freeSpins--;
+        animateFreeSpins(gameState.freeSpins);
     } else {
         gameState.balance = roundMoney(gameState.balance - gameState.bet);
+        animateBalance(gameState.balance);
+
+        // Reset autoplay flag when starting a paid spin
+        gameState.autoPlayEnabled = true;
     }
 
-    updateUI();
+    betElement.textContent = formatMoney(gameState.bet);
 
     messageElement.textContent = isFreeSpin ? "FREE SPIN" : "GOOD LUCK";
 
@@ -106,11 +111,13 @@ export async function spin({
      */
     if (winResult.totalWin > 0) {
         gameState.balance = roundMoney(gameState.balance + winResult.totalWin);
+        animateBalance(gameState.balance);
+        animateWin(winResult.totalWin);
+    } else {
+        winElement.textContent = "0";
     }
 
-    winElement.textContent = formatMoney(winResult.totalWin);
-
-    updateUI();
+    animateFreeSpins(gameState.freeSpins);
 
     /*
      * Present a free-spin trigger first.
@@ -156,9 +163,9 @@ export async function spin({
     gameState.spinning = false;
 
     /*
-     * Continue free spins automatically.
+     * Continue free spins automatically if autoplay is enabled.
      */
-    if (gameState.freeSpins > 0) {
+    if (gameState.freeSpins > 0 && gameState.autoPlayEnabled) {
         await sleep(700);
 
         resetSymbolVisuals(reelViews, paylineLayer, BUFFER_ROWS, SYMBOL_HEIGHT);
@@ -179,5 +186,10 @@ export async function spin({
         });
     } else {
         setControlsDisabled(false);
+
+        // Re-enable autoplay if free spins still exist
+        if (gameState.freeSpins > 0 && !gameState.autoPlayEnabled) {
+            messageElement.textContent = `FREE SPINS LEFT ${gameState.freeSpins} • PRESS SPIN`;
+        }
     }
 }
